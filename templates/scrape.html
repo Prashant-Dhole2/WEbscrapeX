@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    /* Previous styles remain the same */
+    .search-card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .search-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .search-header {
+        background: linear-gradient(135deg, rgb(214, 111, 1) 0%, rgb(255, 153, 51) 100%);
+    }
+    .search-btn {
+        background: linear-gradient(135deg, #03dac6 0%, #018786 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .search-btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    .tip-item {
+        transition: all 0.3s ease;
+        padding: 8px;
+        border-radius: 8px;
+    }
+    .tip-item:hover {
+        background-color: rgba(214, 111, 1, 0.1);
+        transform: translateX(5px);
+    }
+    .product-showcase {
+        margin-top: 50px;
+        padding: 30px 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+    }
+    .product-card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    .product-img {
+        height: 180px;
+        object-fit: contain;
+        padding: 20px;
+        background: white;
+    }
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: rgb(214, 111, 1);
+    }
+    .divider {
+        height: 3px;
+        background: linear-gradient(90deg, transparent, rgb(214, 111, 1), transparent);
+        margin: 40px 0;
+    }
+    .product-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #ff5722;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeIn">
+    <!-- Search Card (same as before) -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card search-card shadow-lg pulse-animation">
+                <div class="card-header text-white search-header">
+                    <h3 class="mb-0 animate__animated animate__fadeInDown"><i class="fas fa-search me-2"></i>Product Search</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('scrape') }}">
+                        <div class="mb-4">
+                            <label for="product" class="form-label animate__animated animate__fadeIn animate__delay-1s">What product are you looking for?</label>
+                            <div class="input-group animate__animated animate__fadeIn animate__delay-1s">
+                                <input type="text" class="form-control form-control-lg py-3" id="product" name="product" 
+                                       placeholder="e.g. iPhone 13, Gaming Laptops, Wireless Earbuds" 
+                                       value="{{ request.form.get('product', '') }}">
+                                <button class="btn search-btn btn-lg px-4" type="submit">
+                                    <i class="fas fa-bolt me-2"></i>Search Now
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 animate__animated animate__fadeIn animate__delay-2s">
+                        <h5 class="d-flex align-items-center">
+                            <i class="fas fa-lightbulb me-2 text-warning"></i>Tips for better results:
+                        </h5>
+                        <ul class="list-unstyled">
+                            <li class="tip-item d-flex align-items-center mb-2">
+                                <i class="fas fa-check-circle me-2 text-success"></i>
+                                Be specific with your product name (e.g. "iPhone 13 Pro Max" instead of "phone")
+                            </li>
+                            <li class="tip-item d-flex align-items-center mb-2">
+                                <i class="fas fa-clock me-2 text-info"></i>
+                                Scraping may take 10-30 seconds depending on the websites
+                            </li>
+                            <li class="tip-item d-flex align-items-center">
+                                <i class="fas fa-sync-alt me-2 text-primary"></i>
+                                If you get no results, try a different product name or check spelling
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Products Showcase with REAL images -->
+    <div class="product-showcase mt-5 shadow-sm animate__animated animate__fadeIn animate__delay-3s">
+        <div class="text-center mb-4">
+            <h3></i> Popular Products Right Now</h3>
+            <p class="text-muted">Try searching for these trending products</p>
+        </div>
+        
+        <div class="row">
+            <!-- iPhone 15 -->
+            <div class="col-md-3 col-6">
+                <div class="card product-card h-100 position-relative">
+                    <span class="product-badge">Trending</span>
+                    <img src="https://m.media-amazon.com/images/I/61SKi94cImL._SL1500_.jpg" 
+                         class="card-img-top product-img" alt="iPhone 15">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">iPhone 15 Pro</h6>
+                 
+                    </div>
+                </div>
+            </div>
+            
+            <!-- MacBook Air -->
+            <div class="col-md-3 col-6">
+                <div class="card product-card h-100 position-relative">
+                    <span class="product-badge">Best Seller</span>
+                    <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         class="card-img-top product-img" alt="MacBook Air">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">MacBook Air M2</h6>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sony Headphones -->
+            <div class="col-md-3 col-6">
+                <div class="card product-card h-100 position-relative">
+                    <span class="product-badge">Top Rated</span>
+                    <img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80" 
+                         class="card-img-top product-img" alt="Sony Headphones">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">Sony WH-1000XM5</h6>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PlayStation 5 -->
+            <div class="col-md-3 col-6">
+                <div class="card product-card h-100 position-relative">
+                    <span class="product-badge">Hot Deal</span>
+                    <img src="https://images.unsplash.com/photo-1607853202273-797f1c22a38e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1527&q=80" 
+                         class="card-img-top product-img" alt="PlayStation 5">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">PlayStation 5</h6>
+                         
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="divider"></div>
+    
+    <div class="row text-center mt-5 animate__animated animate__fadeIn">
+        <div class="col-md-4 mb-4">
+            <div class="p-4">
+                <i class="fas fa-rocket feature-icon"></i>
+                <h4>Lightning Fast</h4>
+                <p class="text-muted">Get price comparisons in seconds across multiple retailers with our optimized scraping technology.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="p-4">
+                <i class="fas fa-chart-line feature-icon"></i>
+                <h4>Price Trends</h4>
+                <p class="text-muted">Track price history to know if it's the right time to buy or if you should wait for a better deal.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="p-4">
+                <i class="fas fa-bell feature-icon"></i>
+                <h4>Price Alerts</h4>
+                <p class="text-muted">Set up notifications and we'll alert you when prices drop on your favorite products.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add focus animation to search input
+        const searchInput = document.getElementById('product');
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('animate__pulse');
+        });
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('animate__pulse');
+        });
+
+        // Add click animation to button
+        const searchBtn = document.querySelector('.search-btn');
+        searchBtn.addEventListener('click', function() {
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Scraping...';
+            this.classList.add('disabled');
+        });
+
+        // Make popular product images clickable to fill search
+        const popularProducts = document.querySelectorAll('.product-card');
+        popularProducts.forEach(product => {
+            product.addEventListener('click', function() {
+                const productName = this.querySelector('.card-title').textContent;
+                searchInput.value = productName;
+                searchInput.focus();
+            });
+        });
+    });
+</script>
+{% endblock %}
+    
+</body>
+</html>

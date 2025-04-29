@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>  
+           .product-showcase {
+            padding: 60px 0;
+            background: #fff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .slider-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slider-track {
+            display: flex;
+            gap: 30px;
+            width: max-content;
+            animation: scroll 40s linear infinite;
+            padding: 20px 0;
+        }
+        
+        .product-card {
+            width: 300px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.5s ease, box-shadow 0.3s ease;
+        }
+         
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-220px * 6)); }
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+         
+        
+        .section-subtitle {
+            color: #666;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+         
+        .slider-container::before,
+        .slider-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .slider-container::before {
+            left: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,1), rgba(255,255,255,0));
+        }
+        
+        .slider-container::after {
+            right: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,1));
+        }
+ 
+        .slider-track:hover {
+            animation-play-state: paused;
+        }
+        
+        .product-slide {
+            width: 250px;
+            height: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .product-slide:hover {
+            transform: scale(1.05) translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+         
+        .product-slide:hover .product-image {
+            transform: scale(1.1);
+        }
+        
+        .product-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .product-slide:hover .product-name {
+            transform: translateY(0);
+        }
+        
+        @keyframes scroll {
+            10% { transform: translateX(0); }
+            80% { transform: translateX(calc(-200px * 10)); }
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #2d2d2d, #333233);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+        
+        .section-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Gradient edges for better UX */
+        .slider-container::before,
+        .slider-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .slider-container::before {
+            left: 0;
+            background: linear-gradient(90deg, #f8f9fa, rgba(248,249,250,0));
+        }
+        
+        .slider-container::after {
+            right: 0;
+            background: linear-gradient(90deg, rgba(248,249,250,0), #f8f9fa);
+        }
+    </style>
+</head>
+<body>
+  {% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero text-center">
+    <div class="container hero-content">
+        <h1 class="animate__animated animate__fadeInDown">Intelligent Product Scraping & Analysis</h1>
+        <p class="animate__animated animate__fadeInDown animate-delay-1">Extract, analyze and visualize product data
+            from Amazon, Flipkart and other e-commerce platforms with powerful web scraping technology.</p>
+        <a href="{{ url_for('scrape') }}"
+            class="btn btn-primary btn-lg animate__animated animate__fadeInUp animate-delay-2">Start <i
+                class="fas fa-arrow-right ms-2"></i></a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="animate__animated animate__fadeIn"> Features</h2>
+            <p class="lead animate__animated animate__fadeIn animate-delay-1">Everything you need for competitive
+                product analysis</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card animate__animated animate__fadeInUp">
+                    <div class="feature-icon">
+                        <i class="fas fa-search-dollar"></i>
+                    </div>
+                    <h3>Price Monitoring</h3>
+                    <p>Track price changes across multiple e-commerce platforms to stay competitive in the market.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card animate__animated animate__fadeInUp animate-delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Trend Analysis</h3>
+                    <p>Identify market trends and consumer preferences with our advanced analytics dashboard.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card animate__animated animate__fadeInUp animate-delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3>News Integration</h3>
+                    <p>Get the latest industry news alongside your product data for complete market intelligence.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Product Showcase Section -->
+<section class="product-showcase">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title animate__animated animate__fadeIn">Trending Products</h2>
+            <p class="section-subtitle animate__animated animate__fadeIn animate-delay-1">Discover popular items from top brands</p>
+        </div>
+        
+        <div class="slider-container">
+            <div class="slider-track">
+                <!-- Smartphones -->
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/41fCDR6pjpL._SX300_SY300_QL70_FMwebp_.jpg" class="product-image" alt="Samsung galaxi ultra">
+                    <div class="product-name">Samsung Galaxy S24 Ultra </div>
+                </div>
+                
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/31hNgq0MCKL._SY445_SX342_QL70_FMwebp_.jpg" class="product-image" alt="iphone ">
+                    <div class="product-name">iphone 16 pro max</div>
+                </div>
+                
+                <!-- Smartwatches -->
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/51PHv+17saL._SX342_SY445_.jpg" class="product-image" alt="Apple Watch">
+                    <div class="product-name">Apple Watch 7</div>
+                </div>
+                
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/71sRBqqrOpL._SL1500_.jpg" class="product-image" alt="Galaxy Watch">
+                    <div class="product-name">Galaxy Watch 4</div>
+                </div>
+                
+                <!-- Laptops -->
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/71TPda7cwUL._SL1500_.jpg" class="product-image" alt="MacBook Air">
+                    <div class="product-name">MacBook Air M1</div>
+                </div>
+                
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/71S8U9VzLTL._SL1500_.jpg" class="product-image" alt="Dell XPS">
+                    <div class="product-name">Dell XPS 13</div>
+                </div>
+                
+                <!-- Fashion -->
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/610MchUkJ4L._SY741_.jpg" class="product-image" alt="Women's Dress">
+                    <div class="product-name">Floral Maxi Dress</div>
+                </div>
+                
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/71NCBXev2YL._SY879_.jpg" class="product-image" alt="Men's Shirt">
+                    <div class="product-name">Men's Casual Shirt</div>
+                </div>
+                
+                <!-- Home Appliances -->
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/61zNuAhHFEL._SL1200_.jpg" class="product-image" alt="Air Fryer">
+                    <div class="product-name">Instant Pot Air Fryer</div>
+                </div>
+                
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/51mfMLzjA4L._SL1000_.jpg" class="product-image" alt="Robot Vacuum">
+                    <div class="product-name">Robot Vacuum</div>
+                </div>
+                
+                <!-- Repeat some items for seamless loop -->
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/61BGE6iu4AL._SL1500_.jpg" class="product-image" alt="iPhone 13">
+                    <div class="product-name">iPhone 13</div>
+                </div>
+                
+                <div class="product-slide">
+                    <img src="https://m.media-amazon.com/images/I/71geVdy6-OS._SL1500_.jpg" class="product-image" alt="Samsung S21">
+                    <div class="product-name">Samsung S21 FE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</section>
+<!-- Analysis Section -->
+<section class="analysis-section" id="analysis">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="animate__animated animate__fadeIn">Product Analysis</h2>
+            <p class="lead animate__animated animate__fadeIn animate-delay-1">Real-time insights from scraped data</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="analysis-card animate__animated animate__fadeInLeft">
+                    <h3><i class="fas fa-chart-pie me-2"></i> Data Overview</h3>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-title">Average Price</div>
+                                <div class="stat-value">₹1,499</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-title">Total Products</div>
+                                <div class="stat-value">42</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('analyze') }}" class="btn btn-outline-primary">View Full Analysis</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="analysis-card animate__animated animate__fadeInRight">
+                    <h3><i class="fas fa-star me-2"></i> Top Products</h3>
+                    <div class="table-responsive mt-4">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>OnePlus Nord CE 2</td>
+                                    <td>₹18,999</td>
+                                    <td><i class="fas fa-star text-warning"></i> 4.5</td>
+                                </tr>
+                                <tr>
+                                    <td>Samsung Galaxy M33</td>
+                                    <td>₹16,499</td>
+                                    <td><i class="fas fa-star text-warning"></i> 4.3</td>
+                                </tr>
+                                <tr>
+                                    <td>Realme Narzo 50</td>
+                                    <td>₹12,999</td>
+                                    <td><i class="fas fa-star text-warning"></i> 4.2</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('scrape') }}" class="btn btn-primary">See All Products</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    
+<!-- News Section -->
+<section class="news-section" id="news">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="animate__animated animate__fadeIn">Latest News</h2>
+            <p class="lead animate__animated animate__fadeIn animate-delay-1">Stay updated with market trends</p>
+        </div>
+
+        <div class="row g-4">
+            {% for article in news_articles[:6] %}
+            <div class="col-md-4">
+                <div
+                    class="news-card animate__animated animate__fadeInUp {% if loop.index == 2 %}animate-delay-1{% elif loop.index == 3 %}animate-delay-2{% endif %}">
+                    <img src="{{ article.Image or 'https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80' }}"
+                        class="news-img w-100" alt="News">
+                    <div class="p-4">
+                        <h4>{{ article.Title }}</h4>
+                        <p>{{ article.Summary[:100] }}...</p>
+                        <a href="{{ article.Link }}" target="_blank" class="btn btn-sm btn-outline-primary">Read
+                            More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ url_for('news') }}"
+                class="btn btn-primary animate__animated animate__fadeIn animate-delay-3">View All News Articles</a>
+        </div>
+    </div>
+</section>
+
+ 
+<!-- About WebScrapX -->
+<section class="about-section py-5 bg-light" id="about">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="animate__animated animate__fadeIn">About <span style="color: rgb(213, 131, 9);">WebScrapX</span>
+            </h2>
+            <p class="lead animate__animated animate__fadeIn animate-delay-1">Powering Smarter E-Commerce Decisions with
+                Data</p>
+        </div>
+
+        <div class="row align-items-center">
+          
+            <div class="col-lg-6 mb-4">
+                <div class="about-card p-4 shadow-sm rounded bg-white animate__animated animate__fadeInLeft">
+                    <h3 class="mb-4"> </i> Our Mission</h3>
+                    <p>At WebScrapX, we empower businesses with <strong>real-time e-commerce intelligence</strong>. Our
+                        platform extracts, analyzes, and visualizes product data from Amazon, Flipkart, and other
+                        marketplaces—helping you stay ahead of competitors.</p>
+                     
+                    <div class="mt-4">
+                        <a href="#features" class="btn btn-outline-primary me-2">Explore Features</a>
+                        <a href="{{ url_for('scrape') }}" class="btn btn-primary">Try Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Features -->
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="feature-highlight p-3 h-100 animate__animated animate__fadeInRight">
+                            <div class="icon-circle mb-3">
+                                
+                            </div>
+                            <h5>Lightning-Fast Scraping</h5>
+                            <p>Extract thousands of product listings in minutes with our optimized scraping engine.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-highlight p-3 h-100 animate__animated animate__fadeInRight animate-delay-1">
+                            <div class="icon-circle mb-3">
+                              
+                            </div>
+                            <h5>Anti-Block Technology</h5>
+                            <p>Bypass CAPTCHAs and IP bans with intelligent request throttling and proxy rotation.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-highlight p-3 h-100 animate__animated animate__fadeInRight animate-delay-2">
+                            <div class="icon-circle mb-3">
+                             
+                            </div>
+                            <h5>Dynamic Analytics</h5>
+                            <p>Track price histories, rating trends, and inventory fluctuations with interactive
+                                dashboards.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+</section>
+
+{% endblock %}
+  
+</body>
+</html>

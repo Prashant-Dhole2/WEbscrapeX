@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyze</title>
+
+    <style>
+        .hover-effect {
+            transition: all 0.3s ease;
+        }
+
+        .hover-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            padding: 15px;
+            background: #f1f3f5;
+        }
+
+        .product-thumbnail {
+            max-width: 80px;
+            max-height: 80px;
+            object-fit: contain;
+        }
+
+        .price-badge {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0d6efd;
+            margin: 10px 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-card {
+                margin-bottom: 15px;
+            }
+
+            .product-image {
+                height: 150px;
+            }
+
+            .price-badge {
+                padding: 3px 8px;
+                font-size: 14px;
+            }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .animate-delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.4s;
+        }
+    </style>
+</head>
+
+<body>
+    {% extends "base.html" %}
+    {% block content %}
+
+    <div class="container my-5">
+        <h1 class="mb-4 animate__animated animate__fadeInDown">Product Analysis</h1>
+
+        <!-- Stats Section -->
+        <div class="row mb-4">
+            <div class="col-md-4 animate__animated animate__fadeInLeft">
+                <div class="card stat-card h-100 hover-effect">
+                    <div class="card-body text-center">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-boxes fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Total Products</h5>
+                        <p class="stat-value display-5">{{ analysis.total_products }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 animate__animated animate__fadeInDown">
+                <div class="card stat-card h-100 hover-effect">
+                    <div class="card-body text-center">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-tag fa-2x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Average Price</h5>
+                        <p class="stat-value display-5">₹{{ "%.2f"|format(analysis.average_price) }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 animate__animated animate__fadeInRight">
+                <div class="card stat-card h-100 hover-effect">
+                    <div class="card-body text-center">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-store fa-2x text-info"></i>
+                        </div>
+                        <h5 class="card-title">Websites Scraped</h5>
+                        <p class="stat-value display-5">{{ analysis.website_distribution|length }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Rated Products Section -->
+        <div class="card shadow mb-4 animate__animated animate__fadeInUp">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Rated Products</h3>
+                <span class="badge bg-light text-primary">{{ analysis.top_rated|length }} Products</span>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    {% for product in analysis.top_rated %}
+                    <div class="col-lg-6 animate__animated animate__fadeIn">
+                        <div class="product-card hover-effect">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    <img src="{{ product.Image if product.Image else 'https://via.placeholder.com/150?text=No+Image' }}"
+                                        class="img-fluid rounded-start product-image" alt="{{ product.Name }}"
+                                        onerror="this.src='https:/via.placeholder.com/150?text=Image+Not+Available'">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ product.Name }}
+                                          
+                                        </h5>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="price-badge">₹{{ product.Price }}</span>
+                                             
+                                            <span
+                                                class="badge bg-{{ 'success' if product.Rating >= 4 else 'warning' if product.Rating >= 3 else 'danger' }}">
+                                                <i class="fas fa-star"></i> {{ product.Rating }}
+                                            </span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <small class="text-muted">
+                                                <i class="fas fa-comment-alt"></i> {{ product.Reviews }} reviews
+                                            </small>
+                                            <span class="badge bg-info">{{ product.Website }}</span>
+                                        </div>
+                                        <div class="mt-2">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar bg-success" role="progressbar"
+                                                    style="width: 20px;"aria-valuenow="{{ product.Rating }}" aria-valuemin="0"
+                                                    aria-valuemax="5">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- All Products Section as Cards -->
+        <div class="card shadow animate__animated animate__fadeIn">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="fas fa-list-ul me-2"></i>All Products</h3>
+                <span class="badge bg-light text-primary">{{ products|length }} Items</span>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    {% for product in products %}
+                    
+                    <div class="col-md-6 col-lg-4 animate__animated animate__fadeInUp">
+                        
+                        <div class="product-card hover-effect h-100">
+                            <img src="{{ product.Image if product.Image else 'https://via.placeholder.com/150?text=No+Image' }}"
+                                class="product-image" alt="{{ product.Name }}"
+                                onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Available'">
+                                       <div class="card-body">
+                                <h5 class="card-title">{{ product.Name }}</h5>
+                                <span class="price-badge mb-2 d-inline-block">₹{{ product.Price }}</span>
+                                <div class="rating-stars mb-1">
+                                    {% for i in range(1, 6) %}
+                                    <i class="fas fa-star{{ ' text-warning' if i <= product.Rating|round(0, 'floor')|int else '-half-alt text-warning' if (product.Rating - i + 1) > 0 else ' text-secondary' }}"></i>
+                                    {% endfor %}
+                                    <span class="ms-2">{{ product.Rating }}</span>
+                                </div>
+                                <div class="mb-2">
+                                    <i class="fas fa-comment-alt text-primary me-1"></i> {{ product.Reviews }} Reviews
+                                </div>
+                                <div class="mt-2">
+                                    <a href="{{ product.Link }}" target="_blank"
+                                        class="badge bg-{{ 'warning' if product.Website == 'Amazon' else 'info' }}">
+                                        <i
+                                            class="fas fa-{{ 'amazon' if product.Website == 'Amazon' else 'shopping-cart' }} me-1"></i>
+                                        {{ product.Website }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div></a>
+                    </div> 
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scroll Animation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const animateOnScroll = function () {
+                const elements = document.querySelectorAll('.animate__animated');
+                elements.forEach(el => {
+                    const elementPosition = el.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+
+                    if (elementPosition < windowHeight - 100) {
+                        const animationClass = el.className.match(/animate__\w+/)[0];
+                        el.classList.add(animationClass);
+                    }
+                });
+            };
+            animateOnScroll();
+            window.addEventListener('scroll', animateOnScroll);
+        });
+    </script>
+
+    {% endblock %}
+</body>
+
+</html>

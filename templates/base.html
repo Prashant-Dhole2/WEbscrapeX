@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WEBSCRAPx{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    {% block extra_css %}{% endblock %}
+    <style>
+        footer .fa {
+    transition: color 0.3s ease;
+}
+footer .fa:hover {
+    color: #0dcaf0; /* Bootstrap info color */
+}
+
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">WEBSCRAPx</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}#Home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('analyze') }}">Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('news') }}">News</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}#about">About us</a></li>
+
+                    {% if 'user_id' in session %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}"><i class="fas fa-user-circle me-1"></i>Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-1"></i>Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt me-1"></i>Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}"><i class="fas fa-user-plus me-1"></i>Register</a></li>
+                    {% endif %}
+
+                    <!-- Profile Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle fa-lg"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}"><i class="fas fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+ 
+    <!-- Footer -->
+<footer class="bg-dark text-white pt-5 pb-4">
+    <div class="container">
+        <div class="row">
+            <!-- About -->
+            <div class="col-md-4 mb-4">
+                <h5 class="text-uppercase fw-bold">WEBSCRAPx</h5>
+                <p>Advanced web scraping and product intelligence platform for e-commerce businesses.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white fs-5"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white fs-5"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-white fs-5"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="text-white fs-5"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-4 mb-4">
+                <h5 class="text-uppercase fw-bold">Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{{ url_for('home') }}" class="text-white text-decoration-none">Home</a></li>
+                    <li><a href="{{ url_for('home') }}#features" class="text-white text-decoration-none">Features</a></li>
+                    <li><a href="{{ url_for('analyze') }}" class="text-white text-decoration-none">Analysis</a></li>
+                    <li><a href="{{ url_for('news') }}" class="text-white text-decoration-none">News</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-md-4 mb-4">
+                <h5 class="text-uppercase fw-bold">Contact</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-envelope me-2"></i> pdhole261@gmail.com</li>
+                    <li><i class="fas fa-phone me-2"></i> +91 9096816086</li>
+                    <li><i class="fas fa-map-marker-alt me-2"></i> Nagpur</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="bg-light">
+
+        <!-- Copyright -->
+        <div class="text-center pt-2">
+            <p class="mb-0">&copy; 2025 <strong>WEBSCRAPx</strong>. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Animate on scroll -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const elements = document.querySelectorAll('.animate__animated');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animationClass = entry.target.dataset.animate;
+                        entry.target.classList.add('animate__animated', animationClass);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            elements.forEach(el => {
+                const classes = Array.from(el.classList);
+                const animation = classes.find(c => c.startsWith('animate__fadeIn'));
+                if (animation) {
+                    el.dataset.animate = animation;
+                    el.classList.remove('animate__animated', animation);
+                    observer.observe(el);
+                }
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!-- templates/settings.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebScraperX - Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .settings-nav .nav-link {
+            border-radius: 0.25rem;
+            margin-bottom: 5px;
+            padding: 10px 15px;
+            transition: all 0.2s;
+        }
+        .settings-nav .nav-link:hover {
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+        .settings-nav .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .settings-card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+            margin-bottom: 20px;
+        }
+        .settings-card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 12px 20px;
+            font-weight: 500;
+        }
+        .form-section {
+            margin-bottom: 25px;
+        }
+        .form-section-title {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #495057;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+        }
+        .danger-zone {
+            border-left: 3px solid #dc3545;
+            padding-left: 15px;
+        }
+    </style>
+</head>
+<body>
+    {% extends "base.html" %}
+    {% block content %}
+    <div class="container py-4">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3 mb-4">
+                <div class="sticky-top pt-2">
+                    <h4 class="mb-4"><i class="fas fa-cog me-2"></i>Settings</h4>
+                    <nav class="nav flex-column settings-nav">
+                        <a class="nav-link active" href="#general" data-bs-toggle="pill">
+                            <i class="fas fa-sliders-h me-2"></i>General
+                        </a>
+                        <a class="nav-link" href="#scraping" data-bs-toggle="pill">
+                            <i class="fas fa-globe me-2"></i>Scraping
+                        </a>
+                        <a class="nav-link" href="#proxy" data-bs-toggle="pill">
+                            <i class="fas fa-shield-alt me-2"></i>Proxy
+                        </a>
+                        <a class="nav-link" href="#data" data-bs-toggle="pill">
+                            <i class="fas fa-database me-2"></i>Data
+                        </a>
+                        <a class="nav-link" href="#account" data-bs-toggle="pill">
+                            <i class="fas fa-user me-2"></i>Account
+                        </a>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Settings Content -->
+            <div class="col-lg-9">
+                <form method="POST" action="{{ url_for('settings') }}">
+                    <div class="tab-content">
+                        <!-- General Settings -->
+                        <div class="tab-pane fade show active" id="general">
+                            <div class="settings-card card">
+                                <div class="settings-card-header">
+                                    <i class="fas fa-sliders-h me-2"></i>General Settings
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">Appearance</h6>
+                                        <div class="mb-3">
+                                            <label class="form-label">Theme</label>
+                                            <select class="form-select" name="theme">
+                                                <option value="light" {% if settings.theme == 'light' %}selected{% endif %}>Light</option>
+                                                <option value="dark" {% if settings.theme == 'dark' %}selected{% endif %}>Dark</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">Display</h6>
+                                        <div class="mb-3">
+                                            <label class="form-label">Results Per Page</label>
+                                            <input type="number" class="form-control" name="results_per_page" 
+                                                   value="{{ settings.results_per_page or 10 }}" min="5" max="50">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">Notifications</h6>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" name="notifications" 
+                                                   id="notifications" {% if settings.notifications %}checked{% endif %}>
+                                            <label class="form-check-label" for="notifications">Enable Email Notifications</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Scraping Settings -->
+                        <div class="tab-pane fade" id="scraping">
+                            <div class="settings-card card">
+                                <div class="settings-card-header">
+                                    <i class="fas fa-globe me-2"></i>Scraping Configuration
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">Request Settings</h6>
+                                        <div class="mb-3">
+                                            <label class="form-label">Timeout (seconds)</label>
+                                            <input type="number" class="form-control" name="scrape_timeout" 
+                                                   value="{{ settings.scrape_timeout or 30 }}" min="5" max="120">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Delay Between Requests (ms)</label>
+                                            <input type="number" class="form-control" name="request_delay" 
+                                                   value="{{ settings.request_delay or 1000 }}" min="0" max="5000">
+                                            <small class="text-muted">Higher values reduce chance of being blocked</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">Error Handling</h6>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" name="retry_failed" 
+                                                   id="retry_failed" {% if settings.retry_failed %}checked{% endif %}>
+                                            <label class="form-check-label" for="retry_failed">Retry Failed Requests</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Proxy Settings -->
+                        <div class="tab-pane fade" id="proxy">
+                            <div class="settings-card card">
+                                <div class="settings-card-header">
+                                    <i class="fas fa-shield-alt me-2"></i>Proxy Settings
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" name="use_proxy" 
+                                               id="use_proxy" {% if settings.use_proxy %}checked{% endif %}>
+                                        <label class="form-check-label" for="use_proxy">Enable Proxy</label>
+                                    </div>
+                                    
+                                    <div id="proxy-fields" >
+                                        <div class="mb-3">
+                                            <label class="form-label">Proxy Address</label>
+                                            <input type="text" class="form-control" name="proxy_address" 
+                                                   value="{{ settings.proxy_address or '' }}" 
+                                                   placeholder="http://proxy.example.com:8080">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Username</label>
+                                            <input type="text" class="form-control" name="proxy_username" 
+                                                   value="{{ settings.proxy_username or '' }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Password</label>
+                                            <input type="password" class="form-control" name="proxy_password" 
+                                                   value="{{ settings.proxy_password or '' }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Data Settings -->
+                        <div class="tab-pane fade" id="data">
+                            <div class="settings-card card">
+                                <div class="settings-card-header">
+                                    <i class="fas fa-database me-2"></i>Data Handling
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">Export Settings</h6>
+                                        <div class="mb-3">
+                                            <label class="form-label">Default Export Format</label>
+                                            <select class="form-select" name="export_format">
+                                                <option value="csv" {% if settings.export_format == 'csv' %}selected{% endif %}>CSV</option>
+                                                <option value="json" {% if settings.export_format == 'json' %}selected{% endif %}>JSON</option>
+                                                <option value="excel" {% if settings.export_format == 'excel' %}selected{% endif %}>Excel</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">Storage</h6>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" name="auto_save" 
+                                                   id="auto_save" {% if settings.auto_save %}checked{% endif %}>
+                                            <label class="form-check-label" for="auto_save">Auto-save Results</label>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Default Save Location</label>
+                                            <input type="text" class="form-control" name="save_location" 
+                                                   value="{{ settings.save_location or '' }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Account Settings -->
+                        <div class="tab-pane fade" id="account">
+                            <div class="settings-card card">
+                                <div class="settings-card-header">
+                                    <i class="fas fa-user me-2"></i>Account Settings
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">Change Password</h6>
+                                        <div class="mb-3">
+                                            <label class="form-label">New Password</label>
+                                            <input type="password" class="form-control" name="new_password">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Confirm Password</label>
+                                            <input type="password" class="form-control" name="confirm_password">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Update Password</button>
+                                    </div>
+                                    
+                                    <div class="form-section danger-zone">
+                                        <h6 class="form-section-title text-danger">Danger Zone</h6>
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            <strong>Warning:</strong> These actions are irreversible
+                                        </div>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                            <i class="fas fa-trash-alt me-2"></i>Delete Account
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-secondary me-2">Reset Defaults</button>
+                        <button type="submit" class="btn btn-primary">Save All Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Account Deletion</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to permanently delete your account? This action cannot be undone.</p>
+                    <p>All your data, including scrapes and settings, will be permanently removed.</p>
+                    <div class="mb-3">
+                        <label class="form-label">Enter your password to confirm:</label>
+                        <input type="password" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Enable/disable proxy fields
+        document.getElementById('use_proxy').addEventListener('change', function() {
+            document.getElementById('proxy-fields').style.display = this.checked ? 'block' : 'none';
+        });
+        
+        // Initialize form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const newPass = document.querySelector('input[name="new_password"]').value;
+            const confirmPass = document.querySelector('input[name="confirm_password"]').value;
+            
+            if (newPass && newPass !== confirmPass) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+            }
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

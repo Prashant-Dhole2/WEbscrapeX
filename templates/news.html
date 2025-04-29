@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News</title>
+</head>
+<body>
+    {% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">All News Articles</h1>
+    
+    <!-- BBC News Section -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for article in news_articles%}
+        <div class="col">
+            <div class="card h-100">
+                <img src="{{ article.Image or 'https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80' }}"
+                     class="card-img-top" 
+                     alt="{{ article.title }}"
+                     onerror="this.src='https: //images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'">
+                <div class="card-body">
+                    <h4>{{ article.Title }}</h4>
+                    <p>{{ article.Summary[:100] }}...</p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{{ article.Link }}" target="_blank" class="btn btn-primary btn-sm">
+                        Read Full Story
+                    </a>
+                    <small class="text-muted float-end">{{article.website}}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div> 
+ </div>
+{% endblock %}
+    
+</body>
+</html>

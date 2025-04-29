@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #2a324a, #1c446e);
+            color: rgb(255, 145, 0);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #03dac6;
+            border-bottom: 2px solid #03dac6;
+            padding-bottom: 10px;
+        }
+        .search-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-bar input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border: 2px solid #03dac6;
+            border-radius: 5px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .search-bar button {
+            padding: 10px 20px;
+            background: #03dac6;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .search-bar button:hover {
+            background: #018786;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .product {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .product h3 {
+            margin: 0;
+            color: #03dac6;
+        }
+        .product p {
+            margin: 5px 0;
+            color: white;
+        }
+        .product p strong {
+            color: #03dac6;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #03dac6;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .loader {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #03dac6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .chart-container {
+            margin: 20px 0;
+            background: rgba(210, 202, 202, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+        <h2>Scraped Results</h2>
+        
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <form id="searchForm">
+                <input type="text" name="product" placeholder="Search for products..." required>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <!-- Loader -->
+        <div class="loader" id="loader"></div>
+
+        <!-- Product Grid -->
+        <div class="product-grid" id="productGrid">
+            {% if products %}
+                {% for product in products %}
+                    <div class="product">
+                        <h3>{{ product.Name }}</h3>
+                        <p><strong>Website:</strong> {{ product.Website }}</p>
+                        <p><strong>Price:</strong> ₹{{ product.Price }}</p>
+                        <p><strong>Rating:</strong> {{ product.Rating }}</p>
+                        <p><strong>Reviews:</strong> {{ product.Reviews }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No products found. Please try again.</p>
+            {% endif %}
+        </div>
+
+        <!-- Analyze Button -->
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="analyzeButton" style="padding: 10px 20px; background: #03dac6; color: #000; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer;">
+                Analyze Data
+            </button>
+        </div>
+
+        <!-- Charts Section -->
+        <div id="chartsSection" style="display: none;">
+            <div class="chart-container">
+                <h3>Price Analysis</h3>
+                <canvas id="priceChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Rating Analysis</h3>
+                <canvas id="ratingChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Reviews Analysis</h3>
+                <canvas id="reviewsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle form submission with AJAX
+        document.getElementById("searchForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // Prevent the form from submitting normally
+
+            // Show the loader
+            const loader = document.getElementById("loader");
+            loader.style.display = "block";
+
+            // Clear the existing products
+            const productGrid = document.getElementById("productGrid");
+            productGrid.innerHTML = "";
+
+            // Get the search query
+            const product = document.querySelector("input[name='product']").value;
+
+            // Send an AJAX request to the server
+            fetch("/scrape", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `product=${encodeURIComponent(product)}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide the loader
+                loader.style.display = "none";
+
+                // Display the new products
+                if (data.products.length > 0) {
+                    data.products.forEach(product => {
+                        const productDiv = document.createElement("div");
+                        productDiv.className = "product";
+                        productDiv.innerHTML = `
+                            <h3>${product.Name}</h3>
+                            <p><strong>Website:</strong> ${product.Website}</p>
+                            <p><strong>Price:</strong> ₹${product.Price}</p>
+                            <p><strong>Rating:</strong> ${product.Rating}</p>
+                            <p><strong>Reviews:</strong> ${product.Reviews}</p>
+                        `;
+                        productGrid.appendChild(productDiv);
+                    });
+                } else {
+                    productGrid.innerHTML = "<p>No products found. Please try again.</p>";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                // Hide the loader in case of error
+                loader.style.display = "none";
+            });
+        });
+
+        // Handle Analyze Button Click
+        document.getElementById("analyzeButton").addEventListener("click", function () {
+            // Get the scraped products
+            const products = [];
+            document.querySelectorAll(".product").forEach(product => {
+                const name = product.querySelector("h3").textContent;
+                const price = parseFloat(product.querySelector("p:nth-child(3)").textContent.replace("₹", ""));
+                const rating = parseFloat(product.querySelector("p:nth-child(4)").textContent);
+                const reviews = parseInt(product.querySelector("p:nth-child(5)").textContent);
+
+                products.push({ name, price, rating, reviews });
+            });
+
+            // Show the charts section
+            const chartsSection = document.getElementById("chartsSection");
+            chartsSection.style.display = "block";
+
+            // Extract data for charts
+            const productNames = products.map(product => product.name);
+            const productPrices = products.map(product => product.price);
+            const productRatings = products.map(product => product.rating);
+            const productReviews = products.map(product => product.reviews);
+
+            // Price Chart
+            const priceCtx = document.getElementById("priceChart").getContext("2d");
+            new Chart(priceCtx, {
+                type: "bar",
+                data: {
+                    labels: productNames,
+                    datasets: [{
+                        label: "Price (₹)",
+                        data: productPrices,
+                        backgroundColor: "rgba(3, 218, 198, 0.6)",
+                        borderColor: "rgba(3, 218, 198, 1)",
+                        borderWidth: 1,
+                    }],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+
+            // Rating Chart
+            const ratingCtx = document.getElementById("ratingChart").getContext("2d");
+            new Chart(ratingCtx, {
+                type: "line",
+                data: {
+                    labels: productNames,
+                    datasets: [{
+                        label: "Rating",
+                        data: productRatings,
+                        backgroundColor: "rgba(255, 145, 0, 0.6)",
+                        borderColor: "rgba(255, 145, 0, 1)",
+                        borderWidth: 2,
+                    }],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                        },
+                    },
+                },
+            });
+
+            // Reviews Chart
+            const reviewsCtx = document.getElementById("reviewsChart").getContext("2d");
+            new Chart(reviewsCtx, {
+                type: "pie",
+                data: {
+                    labels: productNames,
+                    datasets: [{
+                        label: "Reviews",
+                        data: productReviews,
+                        backgroundColor: [
+                            "rgba(255, 99, 132, 0.6)",
+                            "rgba(54, 162, 235, 0.6)",
+                            "rgba(255, 206, 86, 0.6)",
+                            "rgba(75, 192, 192, 0.6)",
+                        ],
+                        borderColor: [
+                            "rgba(255, 99, 132, 1)",
+                            "rgba(54, 162, 235, 1)",
+                            "rgba(255, 206, 86, 1)",
+                            "rgba(75, 192, 192, 1)",
+                        ],
+                        borderWidth: 1,
+                    }],
+                },
+            });
+        });
+    </script>
+</body>
+</html>
